@@ -1,6 +1,7 @@
 package main
 
 import (
+	"flag"
 	"fmt"
 	"io/ioutil"
 	"os"
@@ -8,7 +9,17 @@ import (
 
 func main() {
 	args := os.Args[1:]
-	filename := args[0]
+	//handle no arguments
+	if len(args) == 0 {
+		fmt.Print("Error: Missing File Name\n\nUsage: SafeStrings <options> <filepath>\n\n")
+		os.Exit(0)
+	}
+
+	//setup the flags
+	minNumPtr := flag.Int("numb", 4, "Set the minimum string length to find")
+	flag.Parse()
+
+	filename := args[len(args)-1]
 
 	fileBytes, err := ioutil.ReadFile(filename) // just pass the file name
 	if err != nil {
@@ -23,7 +34,7 @@ func main() {
 			buffer = append(buffer, element)
 			count = count + 1
 		} else {
-			if count > 4 && element == 0 {
+			if count >= *minNumPtr && element == 0 {
 				s := string(buffer[:])
 				fmt.Print(s)
 				fmt.Print("\n")
